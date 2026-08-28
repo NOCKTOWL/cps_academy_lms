@@ -53,4 +53,78 @@ export default factories.createCoreController('api::course.course', ({ strapi })
             progress,
         }
     },
+
+    async create(ctx) {
+        const user = ctx.state.user;
+
+        const course = await strapi.documents('api::course.course').create({
+            data: {
+                ...ctx.request.body.data,
+                instructor: user.documentId,
+            },
+            status: "published",
+        });
+
+        ctx.body = {
+            data: course,
+        }
+    },
+
+    async update(ctx) {
+        const { id: documentId } = ctx.params;
+        const user = ctx.state.user;
+
+        const course = await strapi.documents('api::course.course').findOne({
+            documentId,
+            populate: {
+                instructor: true,
+            },
+        });
+
+        if (!course) {
+            return ctx.notFound('Course not found');
+        }
+
+        if ((course as any).instructor?.documentId !== user.documentId) {
+            return ctx.forbidden('You are not the instructor of this course');
+        }
+
+        const updatedCourse = await strapi.documents('api::course.course').update({
+            documentId,
+            data: ctx.request.body.data,
+            status: "published",
+        });
+
+        ctx.body = {
+            data: updatedCourse,
+        }
+    },
+
+    async delete(ctx) {
+        const {id: documentId} = ctx.params;
+        const user = ctx.state.user;
+
+        const course = await strapi.documents('api::course.course').findOne({
+            documentId,
+            populate: {
+                instructor: true,
+            },
+        });
+
+        if (!course) {
+            return ctx.notFound('Course not found');
+        }
+
+        if ((course as any).instructor?.documentId !== user.documentId) {
+            return ctx.forbidden('You are not the instructor of this course');
+        }
+
+        await strapi.documents('api::course.course').delete({
+            documentId,
+        });
+
+        ctx.body = {
+            message: 'Course deleted successfully',
+        }
+    }
 }));

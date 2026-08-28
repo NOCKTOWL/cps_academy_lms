@@ -5,7 +5,7 @@
 import { factories } from '@strapi/strapi';
 
 export default factories.createCoreController('api::quiz.quiz',({ strapi }) => ({
-  async find(ctx) {
+    async find(ctx) {
         const { documentId } = ctx.params;
 
         const quiz = await strapi.documents('api::quiz.quiz').findOne({
@@ -25,6 +25,103 @@ export default factories.createCoreController('api::quiz.quiz',({ strapi }) => (
             data: quiz,
         }
     },
+
+    async create(ctx) {
+        const user = ctx.state.user;
+        const courseDocumentId = ctx.request.body.data?.course;
+
+        if (!courseDocumentId) {
+            return ctx.badRequest('Course is required');
+        }
+
+        const course = await strapi.documents('api::course.course').findOne({
+            documentId: courseDocumentId,
+            populate: {
+                instructor: true,
+            },
+        });
+
+        if (!course) {
+            return ctx.notFound('Course not found');
+        }
+
+        if ((course as any).instructor?.documentId !== user.documentId) {
+            return ctx.forbidden('You can only create quizzes for your own courses');
+        }
+
+        return await super.create(ctx);
+    },
+    
+    async update(ctx) {
+        const {id: documentId} = ctx.params;
+        const user = ctx.state.user;
+
+        const quiz = await strapi.documents('api::quiz.quiz').findOne({
+            documentId,
+            populate: {
+                course: {
+                    populate: {
+                        instructor: true,
+                    },
+                },
+            },
+        });
+
+        if (!quiz) {
+            return ctx.notFound('Quiz not found');
+        }
+
+        const course = (quiz as any).course;
+
+        if (course?.instructor?.documentId !== user.documentId) {
+            return ctx.forbidden('You can only update quizzes for your own courses');
+        }
+
+        const updatedQuiz = await strapi.documents('api::quiz.quiz').update({
+            documentId,
+            data: ctx.request.body.data,
+            status: "published",
+        });
+
+        ctx.body = {
+            data: updatedQuiz,
+        }
+    },
+
+    async delete(ctx) {
+        const {id: documentId} = ctx.params;
+        const user = ctx.state.user;
+        
+        const quiz = await strapi.documents('api::quiz.quiz').findOne({
+            documentId,
+            populate: {
+                course: {
+                    populate: {
+                        instructor: true,
+                    },
+                },
+            },
+        });
+
+        if (!quiz) {
+            return ctx.notFound('Quiz not found');
+        }
+
+        const course = (quiz as any).course;
+
+        if (course?.instructor?.documentId !== user.documentId) {
+            return ctx.forbidden('You can only delete quizzes for your own courses');
+        }
+
+        await strapi.documents('api::quiz.quiz').delete({
+            documentId,
+        });
+
+        ctx.body = {
+            message: 'Quiz deleted successfully',
+        }
+    },
+
     async submit(ctx) {
         const {documentId} = ctx.params;
         const { answers } = ctx.request.body;
@@ -62,7 +159,7 @@ export default factories.createCoreController('api::quiz.quiz',({ strapi }) => (
 
         const quizAttempt = await strapi.documents('api::quiz-attempt.quiz-attempt').create({
             data: {
-                student: student.id,
+                student: student.documentId,
                 quiz: documentId,
                 score,
                 totalQuestions: questions.length,
