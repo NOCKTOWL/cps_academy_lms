@@ -28,7 +28,7 @@ export default factories.createCoreController('api::quiz.quiz',({ strapi }) => (
 
     async create(ctx) {
         const user = ctx.state.user;
-        const courseDocumentId = ctx.request.body.data?.course;
+        const courseDocumentId = (ctx.request as any).body.data?.course;
 
         if (!courseDocumentId) {
             return ctx.badRequest('Course is required');
@@ -79,7 +79,7 @@ export default factories.createCoreController('api::quiz.quiz',({ strapi }) => (
 
         const updatedQuiz = await strapi.documents('api::quiz.quiz').update({
             documentId,
-            data: ctx.request.body.data,
+            data: (ctx.request as any).body.data,
             status: "published",
         });
 
@@ -124,7 +124,7 @@ export default factories.createCoreController('api::quiz.quiz',({ strapi }) => (
 
     async submit(ctx) {
         const {documentId} = ctx.params;
-        const { answers } = ctx.request.body;
+        const { answers } = (ctx.request as any).body;
 
         if (!answers || !Array.isArray(answers)) {
             return ctx.badRequest('Answers are required and should be an array');

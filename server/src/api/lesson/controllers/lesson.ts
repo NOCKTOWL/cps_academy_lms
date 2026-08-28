@@ -8,7 +8,7 @@ export default factories.createCoreController('api::lesson.lesson', ({ strapi })
     async create(ctx) {
         const user = ctx.state.user;
 
-        const courseDocumentId = ctx.request.body.data?.course;
+        const courseDocumentId = (ctx.request as any).body.data?.course;
 
         if (!courseDocumentId) {
             return ctx.badRequest('Course is required');
@@ -59,7 +59,7 @@ export default factories.createCoreController('api::lesson.lesson', ({ strapi })
 
         const updatedLesson = await strapi.documents('api::lesson.lesson').update({
             documentId,
-            data: ctx.request.body.data,
+            data: (ctx.request as any).body.data,
             status: "published",
         });
 

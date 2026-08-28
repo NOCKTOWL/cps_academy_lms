@@ -59,7 +59,7 @@ export default factories.createCoreController('api::course.course', ({ strapi })
 
         const course = await strapi.documents('api::course.course').create({
             data: {
-                ...ctx.request.body.data,
+                ...(ctx.request as any).body.data,
                 instructor: user.documentId,
             },
             status: "published",
@@ -91,7 +91,7 @@ export default factories.createCoreController('api::course.course', ({ strapi })
 
         const updatedCourse = await strapi.documents('api::course.course').update({
             documentId,
-            data: ctx.request.body.data,
+            data: (ctx.request as any).body.data,
             status: "published",
         });
 
