@@ -1,6 +1,6 @@
-import React from 'react'
+import { User } from '@/types/user'
 
-export default function StudentPage() {
+export default function StudentPage({ user, dashboard }: { user: User; dashboard: Response }) {
   return (
     <div>StudentPage</div>
   )

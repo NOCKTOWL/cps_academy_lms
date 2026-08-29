@@ -2,129 +2,211 @@
  * course controller
  */
 
-import { factories } from '@strapi/strapi';
+import { factories } from "@strapi/strapi";
+import quiz from "../../quiz/controllers/quiz";
+import { populate } from "dotenv";
 
-export default factories.createCoreController('api::course.course', ({ strapi }) => ({
-    async progress(ctx) {
-        const { documentId } = ctx.params;
-        const student = ctx.state.user;
+export default factories.createCoreController(
+    "api::course.course",
+    ({ strapi }) => ({
+        async findOne(ctx) {
+            const { id: documentId } = ctx.params;
+            const user = ctx.state.user;
 
-        const course = await strapi.documents('api::course.course').findOne({
-            documentId,
-            populate: {
-                lessons: {
-                    fields: ['documentId'],
+            if (!user) {
+                return ctx.unauthorized("You must be logged in");
+            }
+
+            const course = await strapi.documents("api::course.course").findOne({
+                documentId,
+
+                populate: {
+                    instructor: {
+                        fields: ["documentId"],
+                    },
+
+                    lessons: true,
+
+                    quizzes: {
+                        populate: {
+                            quiz_questions: true,
+                        },
+                    },
+
+                    enrollments: {
+                        populate: {
+                            student: {
+                                fields: ["documentId", "username"],
+                            },
+                        },
+                    },
                 },
-            },
-        });
+            });
 
-        if (!course) {
-            return ctx.notFound('Course not found');
-        }
+            if (!course) {
+                return ctx.notFound("Course not found");
+            }
 
-        const lessons = (course as any).lessons ?? [];
-        const totalLessons = lessons.length;
+            if ((course as any).instructor?.documentId !== user.documentId) {
+                return ctx.forbidden("You do not own this course");
+            }
 
-        const completedProgress = await strapi.documents('api::lesson-progress.lesson-progress').findMany({
-            filters: {
-                student: {
-                    id: student.id,
+            ctx.body = {
+                data: course,
+            };
+        },
+
+        async myCourses(ctx) {
+            const user = ctx.state.user;
+
+            if (!user) {
+                return ctx.unauthorized("You must be logged in to view your courses");
+            }
+
+            const courses = await strapi.documents("api::course.course").findMany({
+                filters: {
+                    instructor: {
+                        documentId: user.documentId,
+                    },
                 },
-                completed: true,
-            },
-            populate: {
-                lesson: {
-                    fields: ['documentId'],
+                status: "published",
+            });
+
+            ctx.body = {
+                data: courses,
+            };
+        },
+
+        async progress(ctx) {
+            const { documentId } = ctx.params;
+            const student = ctx.state.user;
+
+            const course = await strapi.documents("api::course.course").findOne({
+                documentId,
+                populate: {
+                    lessons: {
+                        fields: ["documentId"],
+                    },
                 },
-            },
-        });
+            });
 
-        const courseLessonIds = lessons.map((lesson: any) => lesson.documentId);
+            if (!course) {
+                return ctx.notFound("Course not found");
+            }
 
-        const completedLessons = completedProgress.filter((progress: any) =>
-            progress.lesson && courseLessonIds.includes(progress.lesson.documentId)).length
-        
+            const lessons = (course as any).lessons ?? [];
+            const totalLessons = lessons.length;
 
-        const progress = totalLessons === 0 ? 0 : Math.round((completedLessons / totalLessons) * 100);
+            const completedProgress = await strapi
+                .documents("api::lesson-progress.lesson-progress")
+                .findMany({
+                    filters: {
+                        student: {
+                            id: student.id,
+                        },
+                        completed: true,
+                    },
+                    populate: {
+                        lesson: {
+                            fields: ["documentId"],
+                        },
+                    },
+                });
 
-        ctx.body = {
-            totalLessons,
-            completedLessons,
-            progress,
-        }
-    },
+            const courseLessonIds = lessons.map((lesson: any) => lesson.documentId);
 
-    async create(ctx) {
-        const user = ctx.state.user;
+            const completedLessons = completedProgress.filter(
+                (progress: any) =>
+                    progress.lesson &&
+                    courseLessonIds.includes(progress.lesson.documentId),
+            ).length;
 
-        const course = await strapi.documents('api::course.course').create({
-            data: {
-                ...(ctx.request as any).body.data,
-                instructor: user.documentId,
-            },
-            status: "published",
-        });
+            const progress =
+                totalLessons === 0
+                    ? 0
+                    : Math.round((completedLessons / totalLessons) * 100);
 
-        ctx.body = {
-            data: course,
-        }
-    },
+            ctx.body = {
+                totalLessons,
+                completedLessons,
+                progress,
+            };
+        },
 
-    async update(ctx) {
-        const { id: documentId } = ctx.params;
-        const user = ctx.state.user;
+        async create(ctx) {
+            const user = ctx.state.user;
 
-        const course = await strapi.documents('api::course.course').findOne({
-            documentId,
-            populate: {
-                instructor: true,
-            },
-        });
+            const course = await strapi.documents("api::course.course").create({
+                data: {
+                    ...(ctx.request as any).body.data,
+                    instructor: user.documentId,
+                },
+                status: "published",
+            });
 
-        if (!course) {
-            return ctx.notFound('Course not found');
-        }
+            ctx.body = {
+                data: course,
+            };
+        },
 
-        if ((course as any).instructor?.documentId !== user.documentId) {
-            return ctx.forbidden('You are not the instructor of this course');
-        }
+        async update(ctx) {
+            const { id: documentId } = ctx.params;
+            const user = ctx.state.user;
 
-        const updatedCourse = await strapi.documents('api::course.course').update({
-            documentId,
-            data: (ctx.request as any).body.data,
-            status: "published",
-        });
+            const course = await strapi.documents("api::course.course").findOne({
+                documentId,
+                populate: {
+                    instructor: true,
+                },
+            });
 
-        ctx.body = {
-            data: updatedCourse,
-        }
-    },
+            if (!course) {
+                return ctx.notFound("Course not found");
+            }
 
-    async delete(ctx) {
-        const {id: documentId} = ctx.params;
-        const user = ctx.state.user;
+            if ((course as any).instructor?.documentId !== user.documentId) {
+                return ctx.forbidden("You are not the instructor of this course");
+            }
 
-        const course = await strapi.documents('api::course.course').findOne({
-            documentId,
-            populate: {
-                instructor: true,
-            },
-        });
+            const updatedCourse = await strapi
+                .documents("api::course.course")
+                .update({
+                    documentId,
+                    data: (ctx.request as any).body.data,
+                    status: "published",
+                });
 
-        if (!course) {
-            return ctx.notFound('Course not found');
-        }
+            ctx.body = {
+                data: updatedCourse,
+            };
+        },
 
-        if ((course as any).instructor?.documentId !== user.documentId) {
-            return ctx.forbidden('You are not the instructor of this course');
-        }
+        async delete(ctx) {
+            const { id: documentId } = ctx.params;
+            const user = ctx.state.user;
 
-        await strapi.documents('api::course.course').delete({
-            documentId,
-        });
+            const course = await strapi.documents("api::course.course").findOne({
+                documentId,
+                populate: {
+                    instructor: true,
+                },
+            });
 
-        ctx.body = {
-            message: 'Course deleted successfully',
-        }
-    }
-}));
+            if (!course) {
+                return ctx.notFound("Course not found");
+            }
+
+            if ((course as any).instructor?.documentId !== user.documentId) {
+                return ctx.forbidden("You are not the instructor of this course");
+            }
+
+            await strapi.documents("api::course.course").delete({
+                documentId,
+            });
+
+            ctx.body = {
+                message: "Course deleted successfully",
+            };
+        },
+    }),
+);
