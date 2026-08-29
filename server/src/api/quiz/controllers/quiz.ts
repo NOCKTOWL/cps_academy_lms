@@ -26,6 +26,120 @@ export default factories.createCoreController('api::quiz.quiz',({ strapi }) => (
         }
     },
 
+    async findOne(ctx) {
+      const { id: documentId } = ctx.params;
+      const user = ctx.state.user;
+
+      if (!user) {
+        return ctx.unauthorized("You must be logged in");
+      }
+
+      const quiz = await strapi.documents("api::quiz.quiz").findOne({
+        documentId,
+
+        populate: {
+          course: {
+            fields: ["documentId"],
+          },
+
+          quiz_questions: {
+            fields: [
+              "documentId",
+              "question",
+              "options",
+              "correctAnswer",
+            ],
+          },
+        },
+      });
+
+      if (!quiz) {
+        return ctx.notFound("Quiz not found");
+      }
+
+      const roleName = user.role?.name;
+
+      // 🦍 STUDENT
+      if (roleName === "Student") {
+        // Check enrollment
+        const enrollments = await strapi
+          .documents("api::enrollment.enrollment")
+          .findMany({
+            filters: {
+              student: {
+                documentId: user.documentId,
+              },
+
+              course: {
+                documentId: quiz.course?.documentId,
+              },
+            },
+          });
+
+        if (enrollments.length === 0) {
+          return ctx.forbidden(
+            "You are not enrolled in the course for this quiz",
+          );
+        }
+
+        // Remove correct answers before sending to student
+        const safeQuestions = (quiz.quiz_questions ?? []).map(
+          (question) => ({
+            documentId: question.documentId,
+            question: question.question,
+            options: question.options,
+          }),
+        );
+
+        ctx.body = {
+          data: {
+            documentId: quiz.documentId,
+            title: quiz.title,
+            quiz_questions: safeQuestions,
+          },
+        };
+
+        return;
+      }
+
+      const courseDocumentId = quiz.course?.documentId;
+
+      if (!courseDocumentId) {
+        return ctx.badRequest("Quiz does not belong to a course");
+      }
+
+      // 🦍 INSTRUCTOR
+      if (roleName === "Instructor") {
+        // Verify instructor owns the course
+        const course = await strapi.documents("api::course.course").findOne({
+          documentId: courseDocumentId,
+          populate: {
+            instructor: {
+              fields: ["documentId"],
+            },
+          },
+        });
+
+        if (
+          !course ||
+          course.instructor?.documentId !== user.documentId
+        ) {
+          return ctx.forbidden(
+            "You do not own the course for this quiz",
+          );
+        }
+
+        // Instructor gets correct answers
+        ctx.body = {
+          data: quiz,
+        };
+
+        return;
+      }
+
+      return ctx.forbidden("You do not have access to this quiz");
+    },
+
     async create(ctx) {
         const user = ctx.state.user;
         const courseDocumentId = (ctx.request as any).body.data?.course;

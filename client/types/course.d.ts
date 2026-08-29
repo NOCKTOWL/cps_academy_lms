@@ -1,3 +1,9 @@
+export type Quiz = {
+  documentId: string;
+  title: string;
+  quiz_questions?: QuizQuestion[];
+};
+
 export type QuizQuestion = {
   documentId: string;
   question: string;
@@ -5,11 +11,16 @@ export type QuizQuestion = {
   correctAnswer: string;
 };
 
-export type Quiz = {
+export type QuizAttempt = {
   documentId: string;
-  title: string;
-  quiz_questions?: QuizQuestion[];
+  score: number;
+  totalQuestions: number;
+  quiz?: {
+    documentId: string;
+    title: string;
+  };
 };
+
 
 export type Course = {
   documentId: string;

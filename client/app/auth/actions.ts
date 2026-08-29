@@ -4,7 +4,7 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
 type LoginState = {
-    error: string;
+    error: string
 }
 
 export async function login(previousState: LoginState, formData: FormData): Promise<LoginState> {
@@ -56,6 +56,81 @@ export async function login(previousState: LoginState, formData: FormData): Prom
         "admin": "/dashboard/admin"
     };
     
+    const role = user.role;
+
+    redirect(roleRoutes[role] || "/");
+}
+
+export async function register(previousState: LoginState, formData: FormData): Promise<LoginState> {
+    const username = formData.get("username") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    if (!username || !email || !password || !confirmPassword) {
+        return {
+            ...previousState,
+            error: "All fields are required.",
+        };
+    }
+
+    if (password !== confirmPassword) {
+        return {
+            ...previousState,
+            error: "Passwords do not match.",
+        };
+    }
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/local/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        return {
+            ...previousState,
+            error: data.message || "Failed to register",
+        };
+    }
+
+    const cookieStore = await cookies();
+
+    cookieStore.set("jwt", data.jwt, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
+    });
+
+    const userData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth-user`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${data.jwt}`
+        }
+    });
+
+    const user = await userData.json();
+
+    if (!userData.ok) {
+        return {
+            ...previousState,
+            error: user.message || "Failed to fetch user data",
+        };
+    }
+
+    const roleRoutes: Record<string, string> = {
+        "student": "/dashboard/student",
+        "instructor": "/dashboard/instructor",
+        "content_manager": "/dashboard/content-manager",
+        "admin": "/dashboard/admin"
+    };
+
     const role = user.role;
 
     redirect(roleRoutes[role] || "/");

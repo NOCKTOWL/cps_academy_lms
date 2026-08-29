@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/auth";
-import StudentCoursePage from "./StudentCoursePage";
+import CourseManagePage from "./StudentCoursePage";
 
 export default async function Page({
   params,
@@ -26,5 +26,5 @@ export default async function Page({
 
   const result = await res.json();
 
-  return <StudentCoursePage course={result.data} />;
+  return <CourseManagePage course={result.data} completedLessonIds={result.meta?.completedLessonIds ?? []} quizAttempts={result.meta?.quizAttempts ?? []} />;
 }

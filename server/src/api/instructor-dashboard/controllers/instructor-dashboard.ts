@@ -81,7 +81,7 @@ export default {
     }));
 
     const uniqueStudentIds = new Set(
-      courseData
+      allCourses
         .flatMap((course: any) => course.enrollments || [])
         .map((enrollment: any) => enrollment.student?.documentId)
         .filter(Boolean),

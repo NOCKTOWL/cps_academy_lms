@@ -3,8 +3,6 @@
  */
 
 import { factories } from "@strapi/strapi";
-import quiz from "../../quiz/controllers/quiz";
-import { populate } from "dotenv";
 
 export default factories.createCoreController(
     "api::course.course",
@@ -17,43 +15,156 @@ export default factories.createCoreController(
                 return ctx.unauthorized("You must be logged in");
             }
 
-            const course = await strapi.documents("api::course.course").findOne({
-                documentId,
+            const roleName = user.role?.name;
 
-                populate: {
-                    instructor: {
-                        fields: ["documentId"],
-                    },
+            if (roleName === "Instructor") {
+                const course = await strapi
+                    .documents("api::course.course")
+                    .findOne({
+                        documentId,
 
-                    lessons: true,
-
-                    quizzes: {
                         populate: {
-                            quiz_questions: true,
-                        },
-                    },
+                            instructor: {
+                                fields: ["documentId"],
+                            },
 
-                    enrollments: {
-                        populate: {
-                            student: {
-                                fields: ["documentId", "username"],
+                            lessons: true,
+
+                            quizzes: {
+                                populate: {
+                                    quiz_questions: true,
+                                },
+                            },
+
+                            enrollments: {
+                                populate: {
+                                    student: {
+                                        fields: ["documentId", "username"],
+                                    },
+                                },
                             },
                         },
+                    });
+
+                if (!course) {
+                    return ctx.notFound("Course not found");
+                }
+
+                if ((course as any).instructor?.documentId !== user.documentId) {
+                    return ctx.forbidden("You do not own this course");
+                }
+
+                ctx.body = {
+                    data: course,
+                };
+
+                return;
+            }
+
+            if (roleName === "Student") {
+                const course = await strapi
+                    .documents("api::course.course")
+                    .findOne({
+                        documentId,
+
+                        populate: {
+                            instructor: {
+                                fields: ["documentId"],
+                            },
+
+                            lessons: true,
+
+                            quizzes: {
+                                populate: {
+                                    quiz_questions: {
+                                        fields: [
+                                            "documentId",
+                                            "question",
+                                            "options",
+                                        ],
+                                    },
+                                },
+                            },
+
+                            enrollments: {
+                                populate: {
+                                    student: {
+                                        fields: ["documentId"],
+                                    },
+                                },
+                            },
+                        },
+                    });
+
+                if (!course) {
+                    return ctx.notFound("Course not found");
+                }
+
+                const isEnrolled = (course as any).enrollments?.some(
+                    (enrollment: any) =>
+                        enrollment.student?.documentId === user.documentId,
+                );
+
+                if (!isEnrolled) {
+                    return ctx.forbidden(
+                        "You are not enrolled in this course",
+                    );
+                }
+
+                const completedProgress = await strapi
+                    .documents("api::lesson-progress.lesson-progress")
+                    .findMany({
+                        filters: {
+                            student: {
+                                documentId: user.documentId,
+                            },
+                            completed: true,
+                        },
+                        populate: {
+                            lesson: {
+                                fields: ["documentId"],
+                            },
+                        },
+                    });
+
+                const completedLessonIds = completedProgress
+                    .map((progress: any) => progress.lesson?.documentId)
+                    .filter(Boolean);
+
+
+                const quizAttempts = await strapi
+                    .documents("api::quiz-attempt.quiz-attempt")
+                    .findMany({
+                        filters: {
+                            student: {
+                                documentId: user.documentId,
+                            },
+                        },
+                        sort: {
+                            createdAt: "desc",
+                        },
+                        populate: {
+                            quiz: {
+                                fields: ["documentId", "title"],
+                            },
+                        },
+                    });
+
+
+                ctx.body = {
+                    data: course,
+                    meta: {
+                        completedLessonIds,
+                        quizAttempts,
                     },
-                },
-            });
+                };
 
-            if (!course) {
-                return ctx.notFound("Course not found");
+                return;
             }
 
-            if ((course as any).instructor?.documentId !== user.documentId) {
-                return ctx.forbidden("You do not own this course");
-            }
-
-            ctx.body = {
-                data: course,
-            };
+            return ctx.forbidden(
+                "You do not have access to this course",
+            );
         },
 
         async myCourses(ctx) {
@@ -80,6 +191,10 @@ export default factories.createCoreController(
         async progress(ctx) {
             const { documentId } = ctx.params;
             const student = ctx.state.user;
+
+            if (!student) {
+                return ctx.unauthorized("You must be logged in to view course progress");
+            }
 
             const course = await strapi.documents("api::course.course").findOne({
                 documentId,
