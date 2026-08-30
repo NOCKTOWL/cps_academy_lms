@@ -8,6 +8,43 @@ type ActionState = {
   message: string;
 };
 
+export async function deleteCourse(
+  documentId: string,
+) {
+  const { jwt } = await requireAuth([
+    "admin",
+    "content_manager",
+    "instructor",
+  ]);
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${documentId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    },
+  );
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message:
+        result.error?.message ||
+        result.message ||
+        "Failed to delete course",
+    };
+  }
+
+  return {
+    success: true,
+    message: "Course deleted successfully",
+  };
+}
+
 export async function addLesson(
   previousState: ActionState,
   formData: FormData,
@@ -194,7 +231,6 @@ export async function addQuiz(
 
   const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
-  // CREATE QUIZ
   const quizRes = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes`,
     {
@@ -224,7 +260,6 @@ export async function addQuiz(
   const quizResult = await quizRes.json();
   const quizDocumentId = quizResult.data.documentId;
 
-  // CREATE QUESTIONS
   const questionResults = await Promise.all(
     questions.map(async (questionData) => {
       const res = await fetch(
@@ -248,9 +283,11 @@ export async function addQuiz(
 
       if (!res.ok) {
         const error = await res.json().catch(() => ({}));
-        throw new Error(
-          error?.error?.message || "Failed to create quiz question."
-        );
+        return {
+          success: false,
+          message:
+            error?.error?.message || "Failed to create quiz question",
+        };
       }
 
       return res.json();

@@ -8,7 +8,7 @@ export default async function Page() {
   //     "content_manager",
   //     "instructor",
   // ]);
-  
+
   const cookieStore = await cookies();
   const jwt = cookieStore.get("jwt")?.value;
 
@@ -26,15 +26,17 @@ export default async function Page() {
   }
 
   const url =
-    user?.role === "instructor"
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/courses/my-courses`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/courses`;
+    // user?.role === "instructor"
+    //   ? `${process.env.NEXT_PUBLIC_API_URL}/api/courses/my-courses`
+    //   : 
+      `${process.env.NEXT_PUBLIC_API_URL}/api/courses`;
 
-      const headers: HeadersInit = {};
 
-      if (jwt) {
-        headers.Authorization = `Bearer ${jwt}`;
-      }
+  const headers: HeadersInit = {};
+
+  if (jwt) {
+    headers.Authorization = `Bearer ${jwt}`;
+  }
 
   const res = await fetch(url, {
     headers,
@@ -49,6 +51,7 @@ export default async function Page() {
 
   return (
     <CoursesPage
+      user={user}
       courses={result.data}
       role={user?.role ?? null}
       isLoggedIn={!!user}

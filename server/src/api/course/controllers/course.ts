@@ -7,6 +7,22 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreController(
     "api::course.course",
     ({ strapi }) => ({
+        async find(ctx) {
+
+            const courses = await strapi.documents("api::course.course").findMany({
+                status: "published",
+                populate: {
+                    instructor: {
+                        fields: ["documentId", "username"],
+                    },
+                },
+            });
+
+            ctx.body = {
+                data: courses,
+            };
+        },
+
         async findOne(ctx) {
             const { id: documentId } = ctx.params;
             const user = ctx.state.user;
@@ -16,7 +32,7 @@ export default factories.createCoreController(
             }
 
             const roleName = user.role?.name;
-            
+
             if (
                 roleName === "Admin" ||
                 roleName === "Content Manager"
@@ -370,30 +386,60 @@ export default factories.createCoreController(
             const { id: documentId } = ctx.params;
             const user = ctx.state.user;
 
-            const course = await strapi.documents("api::course.course").findOne({
-                documentId,
-                populate: {
-                    instructor: true,
-                },
-            });
+            if (!user) {
+                return ctx.unauthorized("You must be logged in");
+            }
+
+            const course = await strapi
+                .documents("api::course.course")
+                .findOne({
+                    documentId,
+                    populate: {
+                        instructor: {
+                            fields: ["documentId"],
+                        },
+                    },
+                });
 
             if (!course) {
                 return ctx.notFound("Course not found");
             }
 
-            if (user.role?.type === "instructor" &&
-                (course as any).instructor?.documentId !== user.documentId
-            ) {
-                return ctx.forbidden("You are not the instructor of this course");
+            const roleName = user.role?.name;
+
+            if (roleName === "Instructor") {
+                if (
+                    (course as any).instructor?.documentId !==
+                    user.documentId
+                ) {
+                    return ctx.forbidden(
+                        "You can only delete your own courses",
+                    );
+                }
             }
 
-            await strapi.documents("api::course.course").delete({
-                documentId,
-            });
+            const allowedRoles = [
+                "Admin",
+                "Content Manager",
+                "Instructor",
+            ];
+
+            if (!allowedRoles.includes(roleName)) {
+                return ctx.forbidden(
+                    "You do not have permission to delete courses",
+                );
+            }
+
+            await strapi
+                .documents("api::course.course")
+                .delete({
+                    documentId,
+                });
 
             ctx.body = {
+                success: true,
                 message: "Course deleted successfully",
             };
-        },
+        }
     }),
 );

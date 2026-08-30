@@ -9,9 +9,7 @@ import { logout } from "@/lib/auth";
 type NavbarProps = {
     user?: {
         username: string;
-        role?: {
-            type: string;
-        };
+        role?: string;
     } | null;
 };
 
@@ -28,7 +26,7 @@ export default function Navbar({ user }: NavbarProps) {
         }
     };
 
-    const roleType = user?.role?.type;
+    const roleType = user?.role;
 
     const getDashboardLink = () => {
         switch (roleType) {
@@ -61,26 +59,16 @@ export default function Navbar({ user }: NavbarProps) {
                 <div className="hidden items-center gap-8 md:flex">
                     <Link
                         href="/blogs"
-                        className="text-sm font-medium text-slate-300 transition hover:text-white"
+                        className="border border-slate-600 px-4 py-2 rounded-full text-sm font-medium text-slate-300 transition hover:text-white"
                     >
                         Blog
                     </Link>
                     <Link
                         href="/courses"
-                        className="text-sm font-medium text-slate-300 transition hover:text-white"
+                        className="border border-slate-600 px-4 py-2 rounded-full text-sm font-medium text-slate-300 transition hover:text-white"
                     >
                         Courses
                     </Link>
-                    {user &&
-                        (roleType === "instructor" || roleType === "content_manager" || roleType === "admin") && (
-                            <Link
-                                href={getDashboardLink()}
-                                className="text-sm font-medium text-slate-300 transition hover:text-white"
-                            >
-                                Dashboard
-                            </Link>
-                        )}
-
                 </div>
 
                 <div className="flex items-center gap-3">

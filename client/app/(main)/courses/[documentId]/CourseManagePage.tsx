@@ -1,7 +1,7 @@
 "use client";
 
 import type { Course } from "@/types/course";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import {
   addLesson,
   addQuiz,
@@ -12,7 +12,9 @@ import {
   addQuizQuestion,
   editQuizQuestion,
   deleteQuizQuestion,
+  deleteCourse
 } from "./actions";
+import { useRouter } from "next/navigation";
 
 type ActionState = {
   success: boolean;
@@ -20,6 +22,8 @@ type ActionState = {
 };
 
 export default function CourseManagePage({ course }: { course: Course }) {
+const router = useRouter();
+
   const [questions, setQuestions] = useState([
     {
       question: "",
@@ -114,6 +118,8 @@ export default function CourseManagePage({ course }: { course: Course }) {
   const [quizDraft, setQuizDraft] = useState({
     title: "",
   });
+
+  const [isDeleting, startDeleteTransition] = useTransition();
 
   const openLessonEdit = (lesson: { documentId: string; title: string; content?: string }) => {
     setEditingLessonId(lesson.documentId);
@@ -211,6 +217,26 @@ export default function CourseManagePage({ course }: { course: Course }) {
     });
   };
 
+  function handleDelete() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this course?",
+    );
+
+    if (!confirmed) return;
+
+    startDeleteTransition(async () => {
+      const result = await deleteCourse(course.documentId);
+
+      if (!result.success) {
+        alert(result.message);
+        return;
+      }
+
+      router.push("/courses");
+      router.refresh();
+    });
+  }
+
   return (
     <main className="min-h-screen bg-slate-950 p-6 text-slate-50">
       <div className="mx-auto max-w-6xl">
@@ -225,7 +251,17 @@ export default function CourseManagePage({ course }: { course: Course }) {
         </header>
 
         <section className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-xl shadow-slate-950/20">
-          <h2 className="text-xl font-bold text-white">Course Details</h2>
+          <div className="flex justify-between items-center w-full">
+            <h2 className="text-xl font-bold text-white">Course Details</h2>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="rounded-lg bg-rose-500 px-2 py-1 font-medium text-white disabled:opacity-60"
+            >
+              {isDeleting ? "Deleting..." : "Delete Course"}
+            </button>
+          </div>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">

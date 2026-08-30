@@ -92,13 +92,13 @@ export default function StudentCoursePage({
                         handleComplete(lesson.documentId)
                       }
                       disabled={isPending}
-                      className={`shrink-0 rounded-lg px-4 py-2 text-sm font-medium transition ${isCompleted
+                      className={`shrink-0 rounded-lg px-4 py-2 text-sm font-medium transition whitespace-pre-wrap ${isCompleted
                         ? "bg-emerald-500 text-white"
                         : "bg-cyan-500 text-slate-950 hover:bg-cyan-400"
                         } disabled:cursor-not-allowed disabled:opacity-60`}
                     >
                       {isCompleted
-                        ? "Completed ✓"
+                        ? "Completed     ✓"
                         : isThisLessonPending
                           ? "Completing..."
                           : "Mark Complete"}

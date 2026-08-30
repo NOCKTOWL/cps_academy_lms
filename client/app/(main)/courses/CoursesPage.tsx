@@ -6,16 +6,25 @@ type Course = {
   documentId: string;
   title: string;
   description?: string;
+  instructor: {
+    documentId: string;
+    username: string;
+  };
 };
 
 export default function CoursesPage({
   courses,
   role,
   isLoggedIn,
+  user,
 }: {
   courses: Course[];
   role: string;
   isLoggedIn: boolean;
+  user: {
+    documentId: string;
+    username: string;
+  } | null;
 }) {
 
   const canManage = role === "admin" || role === "content_manager" || role === "instructor";
@@ -70,24 +79,40 @@ export default function CoursesPage({
                 </p>
               </div>
 
-              {canManage ? (
+              {role === "admin" || role === "content_manager" ? (
                 <Link
                   href={`/courses/${course.documentId}`}
-                  className="rounded-lg bg-cyan-500 px-4 py-2 font-medium text-slate-950"
+                  className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
                 >
                   Manage
                 </Link>
+              ) : role === "instructor" ? (
+                course.instructor.documentId === user?.documentId ? (
+                  <Link
+                    href={`/courses/${course.documentId}`}
+                    className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
+                  >
+                    Manage
+                  </Link>
+                ) : (null
+                  // <Link
+                  //   href={`/courses/${course.documentId}`}
+                  //   className="rounded-lg border border-sky-600/30 px-4 py-2 font-medium text-sky-300 transition hover:border-sky-600/50 hover:bg-sky-700/20"
+                  // >
+                  //   View Course
+                  // </Link>
+                )
               ) : !isLoggedIn ? (
                 <Link
                   href="/auth/register"
-                  className="rounded-lg bg-cyan-500 px-4 py-2 font-medium text-slate-950"
+                  className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
                 >
                   Enroll Now
                 </Link>
               ) : (
                 <Link
                   href={`/courses/${course.documentId}`}
-                  className="rounded-lg bg-cyan-500 px-4 py-2 font-medium text-slate-950"
+                  className="rounded-lg border border-sky-600/30 px-4 py-2 font-medium text-sky-300 transition hover:border-sky-600/50 hover:bg-sky-700/20"
                 >
                   View Course
                 </Link>
