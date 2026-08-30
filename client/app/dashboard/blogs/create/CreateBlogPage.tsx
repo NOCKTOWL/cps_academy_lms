@@ -37,7 +37,7 @@ export default function CreateBlogPage() {
           return;
         }
 
-        router.push("/dashboard/content-manager/blogs");
+        router.push("/dashboard/blogs");
         router.refresh();
       } catch {
         setError("Something went wrong.");

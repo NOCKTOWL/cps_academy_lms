@@ -48,8 +48,7 @@ export default {
       ).length,
       totalContentManagers: users.filter(
         (user: any) =>
-          user.role?.type === "content_manager" ||
-          user.role?.type === "content-manager",
+          user.role?.type === "content_manager"
       ).length,
       totalCourses: courses.length,
       totalEnrollments: enrollments.length,

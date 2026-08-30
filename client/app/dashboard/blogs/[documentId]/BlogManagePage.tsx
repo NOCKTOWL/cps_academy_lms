@@ -64,14 +64,14 @@ export default function BlogManagePage({
         return;
       }
 
-      router.push("/dashboard/content-manager/blogs");
+      router.push("/dashboard/blogs");
       router.refresh();
     });
   }
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <div className="mx-auto max-w-[1500px] p-6 lg:p-8">
+      <div className="mx-auto max-w-375 p-6 lg:p-8">
         <header className="mb-8 border-b border-slate-800 pb-6">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">
             Edit post

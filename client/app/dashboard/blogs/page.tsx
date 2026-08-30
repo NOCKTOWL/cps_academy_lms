@@ -13,10 +13,10 @@ type BlogPost = {
 };
 
 export default async function Page() {
-  const { jwt } = await requireAuth(["content_manager"]);
+  const { jwt } = await requireAuth(["admin","content_manager"]);
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts?populate=author`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts`,
     {
       headers: {
         Authorization: `Bearer ${jwt}`,

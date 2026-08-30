@@ -38,7 +38,7 @@ export default function BlogsPage({
           </div>
 
           <Link
-            href="/dashboard/content-manager/blogs/create"
+            href="/dashboard/blogs/create"
             className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
           >
             + Create blog
@@ -62,7 +62,7 @@ export default function BlogsPage({
                     />
                   </div>
                 ) : (
-                  <div className="flex h-56 w-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 text-sm text-slate-500">
+                  <div className="flex h-56 w-full items-center justify-center bg-linear-to-br from-slate-800 to-slate-950 text-sm text-slate-500">
                     No cover image
                   </div>
                 )}
@@ -87,7 +87,7 @@ export default function BlogsPage({
                     </span>
 
                     <Link
-                      href={`/dashboard/content-manager/blogs/${blog.documentId}`}
+                      href={`/dashboard/blogs/${blog.documentId}`}
                       className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 transition hover:text-cyan-200"
                     >
                       Manage

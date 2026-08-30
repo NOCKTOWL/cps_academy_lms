@@ -7,6 +7,45 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreController(
   "api::blog-post.blog-post",
   ({ strapi }) => ({
+    async find(ctx) {
+      const blogs = await strapi
+        .documents("api::blog-post.blog-post")
+        .findMany({
+          populate: {
+            author: {
+              fields: ["username"],
+            },
+          },
+        });
+
+      ctx.body = {
+        data: blogs,
+      };
+    },
+
+    async findOne(ctx) {
+      const { id: documentId } = ctx.params;
+
+      const blog = await strapi
+        .documents("api::blog-post.blog-post")
+        .findOne({
+          documentId,
+          populate: {
+            author: {
+              fields: ["username"],
+            },
+          },
+        });
+
+      if (!blog) {
+        return ctx.notFound("Blog post not found");
+      }
+
+      ctx.body = {
+        data: blog,
+      };
+    },
+
     async create(ctx) {
       const user = ctx.state.user;
 

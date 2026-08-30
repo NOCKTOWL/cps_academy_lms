@@ -14,7 +14,7 @@ export type UpdateBlogState = {
 };
 
 export async function createBlog(data: BlogData) {
-  const { jwt } = await requireAuth(["content_manager"]);
+  const { jwt } = await requireAuth(["admin","content_manager"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts`,
@@ -52,7 +52,7 @@ export async function updateBlog(
   previousState: UpdateBlogState,
   formData: FormData,
 ): Promise<UpdateBlogState> {
-  const { jwt } = await requireAuth(["content_manager"]);
+  const { jwt } = await requireAuth(["admin","content_manager"]);
 
   const title = formData.get("title")?.toString().trim();
   const body = formData.get("body")?.toString().trim();
@@ -103,7 +103,7 @@ export async function updateBlog(
 }
 
 export async function deleteBlog(documentId: string) {
-  const { jwt } = await requireAuth(["content_manager"]);
+  const { jwt } = await requireAuth(["admin","content_manager"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts/${documentId}`,

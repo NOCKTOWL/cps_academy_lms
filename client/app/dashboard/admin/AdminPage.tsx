@@ -141,7 +141,7 @@ export default function AdminPage({
           </Link>
 
           <Link
-            href="/dashboard/content-manager/blogs"
+            href="/dashboard/blogs"
             className="rounded-xl border border-slate-700 bg-slate-900 p-6 transition hover:border-cyan-500"
           >
             <h2 className="text-xl font-bold">Manage Blogs</h2>
