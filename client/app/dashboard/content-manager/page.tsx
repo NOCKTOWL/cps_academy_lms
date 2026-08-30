@@ -1,16 +1,30 @@
+import { requireAuth } from "@/lib/auth";
+import ContentManagerPage from "./ContentManagerPage";
 
-import { requireAuth } from '@/lib/auth';
-import ContentManagerPage from './ContentManagerPage'
-
-export default async function page() {
+export default async function Page() {
   const { user, jwt } = await requireAuth(["content_manager"]);
 
-  const dashboard = await fetch(`/api/content-manager-dashboard`, {
-    headers: {
-      "Authorization": `Bearer ${jwt}`
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/content-manager/dashboard`,
+    {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      cache: "no-store",
     },
-    cache: "no-store"
-  });
+  );
 
-  return <ContentManagerPage user={user} dashboard={dashboard} />
+  if (!res.ok) {
+    throw new Error("Failed to fetch dashboard data");
+  }
+
+  const dashboard = await res.json();
+  console.log("Dashboard data:", dashboard);
+
+  return (
+    <ContentManagerPage
+      user={user}
+      dashboard={dashboard}
+    />
+  );
 }

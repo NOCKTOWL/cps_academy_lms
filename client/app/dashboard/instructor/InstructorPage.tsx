@@ -29,52 +29,65 @@ export default function InstructorPage({
 }: InstructorPageProps) {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
-      <div className="mx-auto max-w-6xl p-6 lg:p-8">
-        <div className="mb-8">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-400">
-            Instructor dashboard
-          </p>
+      <div className="mx-auto max-w-7xl p-6 lg:p-8">
+        <header className="mb-8 flex flex-col gap-5 border-b border-slate-800 pb-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">
+              Instructor dashboard
+            </p>
 
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">
-            Welcome back, {user.username}
-          </h1>
+            <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+              Welcome back, {user.username}
+            </h1>
 
-          <p className="mt-2 text-slate-300">
-            Here&apos;s an overview of your courses and students.
-          </p>
-        </div>
+            <p className="mt-2 text-slate-300">
+              Here&apos;s the pulse of your courses and student progress.
+            </p>
+          </div>
+        </header>
 
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-slate-950/20">
             <p className="text-sm font-medium text-slate-400">Total Courses</p>
-            <p className="mt-3 text-3xl font-bold text-white">
+            <p className="mt-3 text-3xl font-black text-white">
               {dashboard.totalCourses}
             </p>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-slate-950/20">
             <p className="text-sm font-medium text-slate-400">Total Lessons</p>
-            <p className="mt-3 text-3xl font-bold text-white">
+            <p className="mt-3 text-3xl font-black text-white">
               {dashboard.totalLessons}
             </p>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-slate-950/20">
             <p className="text-sm font-medium text-slate-400">Total Quizzes</p>
-            <p className="mt-3 text-3xl font-bold text-white">
+            <p className="mt-3 text-3xl font-black text-white">
               {dashboard.totalQuizzes}
             </p>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-slate-950/20">
             <p className="text-sm font-medium text-slate-400">Total Students</p>
-            <p className="mt-3 text-3xl font-bold text-white">
+            <p className="mt-3 text-3xl font-black text-white">
               {dashboard.totalStudents}
             </p>
           </div>
-        </div>
+        </section>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-slate-950/20">
+        <section className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-slate-950/20">
+          <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+            <h2 className="text-xl font-bold text-white">Courses overview</h2>
+
+            <Link
+              href="/dashboard/instructor/results"
+              className="text-sm font-medium text-cyan-300 hover:text-cyan-200"
+            >
+              View quiz results
+            </Link>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full min-w-190 text-left">
               <thead>
@@ -149,7 +162,7 @@ export default function InstructorPage({
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       </div>
     </main>
   );

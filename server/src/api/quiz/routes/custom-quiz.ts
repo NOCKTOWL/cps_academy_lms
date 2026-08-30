@@ -8,13 +8,5 @@ export default {
                 auth: {},
             },
         },
-        {
-            method: 'POST',
-            path: '/quizzes/:documentId/submit',
-            handler: 'quiz.submit',
-            config: {
-                auth: {},
-            },
-        },
     ],
 }

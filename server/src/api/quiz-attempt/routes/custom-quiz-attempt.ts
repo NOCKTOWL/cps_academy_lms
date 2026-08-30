@@ -8,6 +8,14 @@ export default {
         auth: {},
       },
     },
+    {
+      method: 'GET',
+      path: '/quiz-attempts/instructor-results',
+      handler: 'quiz-attempt.instructorResults',
+      config: {
+        auth: {},
+      },
+    },
 
     {
       method: "POST",

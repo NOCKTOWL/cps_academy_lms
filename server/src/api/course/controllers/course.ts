@@ -188,6 +188,31 @@ export default factories.createCoreController(
             };
         },
 
+        async studentCourses(ctx) {
+            const user = ctx.state.user;
+
+            if (!user) {
+                return ctx.unauthorized("You must be logged in to view your courses");
+            }
+
+            const enrollments = await strapi.documents("api::enrollment.enrollment").findMany({
+                filters: {
+                    student: {
+                        documentId: user.documentId,
+                    },
+                },
+                populate: {
+                    course: true,
+                },
+            });
+
+            const courses = enrollments.map((enrollment: any) => enrollment.course);
+
+            ctx.body = {
+                data: courses,
+            };
+        },
+
         async progress(ctx) {
             const { documentId } = ctx.params;
             const student = ctx.state.user;

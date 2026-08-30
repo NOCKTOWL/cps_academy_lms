@@ -30,6 +30,10 @@
     "totalQuestions": {
       "type": "integer",
       "required": true
+    },
+    "answers": {
+      "type": "json",
+      "required": true
     }
   }
 }

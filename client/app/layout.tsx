@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import 'lenis/dist/lenis.css'
+import {ReactLenis} from 'lenis/react';
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -20,6 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${poppins.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <ReactLenis root />
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

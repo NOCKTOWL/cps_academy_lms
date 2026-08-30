@@ -629,6 +629,7 @@ export interface ApiQuizAttemptQuizAttempt extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    answers: Schema.Attribute.JSON & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
