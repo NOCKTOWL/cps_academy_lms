@@ -31,14 +31,14 @@ export default function RegisterPage() {
         <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.18),transparent_30%),linear-gradient(135deg,#020617_0%,#0f172a_55%,#111827_100%)] p-6 sm:p-10 lg:border-b-0 lg:border-r lg:p-14">
           <div className="relative z-10 flex min-h-full flex-col">
             <header className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <Link href="/" className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 font-black text-white">
                   C
                 </div>
                 <div>
                   <p className="text-lg font-bold tracking-tight">CPS Academy</p>
                 </div>
-              </div>
+              </Link>
             </header>
 
             <div className="mt-16 flex flex-1 flex-col justify-center">

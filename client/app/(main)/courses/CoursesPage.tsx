@@ -102,19 +102,12 @@ export default function CoursesPage({
                   //   View Course
                   // </Link>
                 )
-              ) : !isLoggedIn ? (
+              ) : (
                 <Link
                   href="/auth/register"
                   className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
                 >
                   Enroll Now
-                </Link>
-              ) : (
-                <Link
-                  href={`/courses/${course.documentId}`}
-                  className="rounded-lg border border-sky-600/30 px-4 py-2 font-medium text-sky-300 transition hover:border-sky-600/50 hover:bg-sky-700/20"
-                >
-                  View Course
                 </Link>
               )}
             </div>
