@@ -23,7 +23,7 @@ export async function addLesson(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/lessons`, {
     method: "POST",
@@ -72,7 +72,7 @@ export async function editLesson(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/lessons/${documentId}`,
@@ -121,7 +121,7 @@ export async function deleteLesson(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/lessons/${documentId}`,
@@ -192,7 +192,7 @@ export async function addQuiz(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   // CREATE QUIZ
   const quizRes = await fetch(
@@ -282,7 +282,7 @@ export async function editQuiz(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes/${documentId}`,
@@ -365,7 +365,7 @@ export async function addQuizQuestion(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/quiz-questions`,
@@ -440,7 +440,7 @@ export async function editQuizQuestion(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/quiz-questions/${documentId}`,
@@ -496,7 +496,7 @@ export async function deleteQuizQuestion(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/quiz-questions/${documentId}`,
@@ -541,7 +541,7 @@ export async function deleteQuiz(
     };
   }
 
-  const { jwt } = await requireAuth(["instructor"]);
+  const { jwt } = await requireAuth(["admin", "content_manager", "instructor"]);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes/${documentId}`,

@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import {register} from "../actions";
+
+import { BiSolidShow, BiSolidHide } from "react-icons/bi";
 
 type RegisterState = {
   error: string;
@@ -14,37 +17,11 @@ const initialState: RegisterState = {
 };
 
 export default function RegisterPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [state, formAction, isPending] = useActionState(
-    async (previousState: RegisterState, formData: FormData) => {
-      const username = String(formData.get("username") ?? "").trim();
-      const email = String(formData.get("email") ?? "").trim();
-      const password = String(formData.get("password") ?? "").trim();
-      const confirmPassword = String(formData.get("confirmPassword") ?? "").trim();
-
-      if (!username || !email || !password || !confirmPassword) {
-        return {
-          ...previousState,
-          error: "All fields are required.",
-          success: "",
-        };
-      }
-
-      if (password !== confirmPassword) {
-        return {
-          ...previousState,
-          error: "Passwords do not match.",
-          success: "",
-        };
-      }
-
-      // hook this to your backend register endpoint when ready
-      // fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/local/register`, {...})
-      return {
-        ...previousState,
-        error: "",
-        success: "Account created. You can now sign in.",
-      };
-    },
+    register,
     initialState
   );
 
@@ -55,7 +32,7 @@ export default function RegisterPage() {
           <div className="relative z-10 flex min-h-full flex-col">
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400 font-black text-slate-950">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 font-black text-white">
                   C
                 </div>
                 <div>
@@ -65,13 +42,13 @@ export default function RegisterPage() {
             </header>
 
             <div className="mt-16 flex flex-1 flex-col justify-center">
-              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.35em] text-cyan-300">
+              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.35em] text-sky-300">
                 Start now
               </p>
 
               <h1 className="max-w-xl text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-7xl">
                 Join the next
-                <span className="block text-cyan-300">big skill move.</span>
+                <span className="block text-sky-300">big skill move.</span>
               </h1>
 
               <p className="mt-6 max-w-lg text-base text-slate-300 sm:text-lg">
@@ -101,7 +78,7 @@ export default function RegisterPage() {
         <section className="flex items-center justify-center bg-slate-950 p-6 sm:p-10 lg:p-14">
           <div className="w-full max-w-xl">
             <div className="mb-8">
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sky-300">
                 Create account
               </p>
               <h2 className="mt-3 text-3xl font-black tracking-tight text-white">
@@ -119,7 +96,7 @@ export default function RegisterPage() {
                   type="text"
                   name="username"
                   placeholder="yourname"
-                  className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 text-white placeholder:text-slate-400 focus:border-sky-400 focus:outline-none"
                 />
               </div>
 
@@ -132,7 +109,7 @@ export default function RegisterPage() {
                   type="email"
                   name="email"
                   placeholder="you@example.com"
-                  className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 text-white placeholder:text-slate-400 focus:border-sky-400 focus:outline-none"
                 />
               </div>
 
@@ -140,26 +117,54 @@ export default function RegisterPage() {
                 <label htmlFor="password" className="block text-sm font-medium text-slate-200">
                   Password
                 </label>
-                <input
-                  id="password"
-                  type="password"
-                  name="password"
-                  placeholder="••••••••"
-                  className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="••••••••"
+                    className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 pr-12 text-white placeholder:text-slate-400 focus:border-sky-400 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <BiSolidHide className="size-8" />
+                    ) : (
+                      <BiSolidShow className="size-8" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-200">
                   Confirm password
                 </label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="••••••••"
-                  className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    placeholder="••••••••"
+                    className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3.5 pr-12 text-white placeholder:text-slate-400 focus:border-sky-400 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? (
+                      <BiSolidHide className="size-8" />
+                    ) : (
+                      <BiSolidShow className="size-8" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               {state.error && (
@@ -168,16 +173,10 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {state.success && (
-                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-                  {state.success}
-                </div>
-              )}
-
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full rounded-2xl bg-cyan-400 px-5 py-3.5 text-base font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-2xl bg-sky-700/80 px-5 py-3.5 text-base font-semibold text-white transition hover:bg-sky-600/80 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isPending ? "Creating account..." : "Create account"}
               </button>
@@ -185,7 +184,7 @@ export default function RegisterPage() {
 
             <p className="mt-8 text-sm text-slate-400">
               Already got account?{" "}
-              <Link href="/auth/login" className="font-medium text-cyan-300 hover:text-cyan-200">
+              <Link href="/auth/login" className="font-medium text-sky-300 hover:text-sky-200">
                 Sign in
               </Link>
             </p>

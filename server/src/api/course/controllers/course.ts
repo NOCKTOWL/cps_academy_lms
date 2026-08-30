@@ -16,6 +16,49 @@ export default factories.createCoreController(
             }
 
             const roleName = user.role?.name;
+            
+            if (
+                roleName === "Admin" ||
+                roleName === "Content Manager"
+            ) {
+                const course = await strapi
+                    .documents("api::course.course")
+                    .findOne({
+                        documentId,
+
+                        populate: {
+                            instructor: {
+                                fields: ["documentId"],
+                            },
+
+                            lessons: true,
+
+                            quizzes: {
+                                populate: {
+                                    quiz_questions: true,
+                                },
+                            },
+
+                            enrollments: {
+                                populate: {
+                                    student: {
+                                        fields: ["documentId", "username"],
+                                    },
+                                },
+                            },
+                        },
+                    });
+
+                if (!course) {
+                    return ctx.notFound("Course not found");
+                }
+
+                ctx.body = {
+                    data: course,
+                };
+
+                return;
+            }
 
             if (roleName === "Instructor") {
                 const course = await strapi
@@ -304,7 +347,9 @@ export default factories.createCoreController(
                 return ctx.notFound("Course not found");
             }
 
-            if ((course as any).instructor?.documentId !== user.documentId) {
+            if (user.role?.type === "instructor" &&
+                (course as any).instructor?.documentId !== user.documentId
+            ) {
                 return ctx.forbidden("You are not the instructor of this course");
             }
 
@@ -336,7 +381,9 @@ export default factories.createCoreController(
                 return ctx.notFound("Course not found");
             }
 
-            if ((course as any).instructor?.documentId !== user.documentId) {
+            if (user.role?.type === "instructor" &&
+                (course as any).instructor?.documentId !== user.documentId
+            ) {
                 return ctx.forbidden("You are not the instructor of this course");
             }
 

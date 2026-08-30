@@ -19,7 +19,6 @@ export default async function page() {
   }
 
   const dashboard = await res.json();
-  console.log(dashboard);
 
   return <StudentPage user={user} dashboard={dashboard} />
 }

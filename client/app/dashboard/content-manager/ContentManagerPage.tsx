@@ -70,14 +70,14 @@ export default function ContentManagerPage({
 
           <div className="mt-5 flex flex-wrap gap-4">
             <Link
-              href="/dashboard/content-manager/courses"
+              href="/dashboard/courses"
               className="rounded-lg bg-cyan-500 px-5 py-3 font-medium text-slate-950 transition hover:bg-cyan-400"
             >
               Manage Courses
             </Link>
 
             <Link
-              href="/dashboard/content-manager/blogs"
+              href="/dashboard/blogs"
               className="rounded-lg border border-slate-700 px-5 py-3 font-medium transition hover:border-cyan-500"
             >
               Manage Blogs
