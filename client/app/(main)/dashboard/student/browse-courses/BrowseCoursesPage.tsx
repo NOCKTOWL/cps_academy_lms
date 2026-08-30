@@ -24,11 +24,9 @@ export default function BrowseCoursesPage({
 
     function handleEnroll(courseDocumentId: string) {
         startTransition(async () => {
-            console.log("Trying to enroll:", courseDocumentId);
 
             const result = await enrollCourse(courseDocumentId);
 
-            console.log("Enroll result:", result);
 
             if (result.success) {
                 setEnrolledCourseIds((prev) => [

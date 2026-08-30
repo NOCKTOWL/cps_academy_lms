@@ -13,6 +13,7 @@ export default async function Page() {
   const jwt = cookieStore.get("jwt")?.value;
 
   let user = null;
+
   if (jwt) {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth-user`, {
       method: "GET",
@@ -23,6 +24,27 @@ export default async function Page() {
     if (res.ok) {
       user = await res.json();
     }
+  }
+
+  if (user?.role === "student") {
+    const enrolledCourses = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses/student-courses`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      cache: "no-store",
+    });
+
+    if (!enrolledCourses.ok) {
+      throw new Error("Failed to fetch enrolled courses");
+    }
+
+    const enrolledCoursesData = await enrolledCourses.json();
+
+    const enrolledCourseIds = enrolledCoursesData.data.map(
+      (course: { documentId: string }) => course.documentId,
+    );
+
+    user.enrolledCourseIds = enrolledCourseIds;
   }
 
   const url =

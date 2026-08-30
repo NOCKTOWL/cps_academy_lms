@@ -26,7 +26,6 @@ export default factories.createCoreController(
                 return ctx.badRequest("Course ID is required");
             }
 
-            // Check course exists
             const course = await strapi
                 .documents("api::course.course")
                 .findOne({
@@ -37,7 +36,6 @@ export default factories.createCoreController(
                 return ctx.notFound("Course not found");
             }
 
-            // Check if already enrolled
             const existingEnrollment = await strapi
                 .documents("api::enrollment.enrollment")
                 .findMany({
@@ -55,7 +53,6 @@ export default factories.createCoreController(
                 return ctx.badRequest("You are already enrolled in this course");
             }
 
-            // Create enrollment
             const enrollment = await strapi
                 .documents("api::enrollment.enrollment")
                 .create({

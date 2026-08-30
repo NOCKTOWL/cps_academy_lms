@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { startTransition, useState } from "react";
+import { enrollCourse } from "./actions";
 
 type Course = {
   documentId: string;
@@ -24,10 +26,31 @@ export default function CoursesPage({
   user: {
     documentId: string;
     username: string;
+    enrolledCourseIds?: string[];
   } | null;
 }) {
 
   const canManage = role === "admin" || role === "content_manager" || role === "instructor";
+
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<string[]>(
+    user?.enrolledCourseIds || [],
+  );
+
+  function handleEnroll(courseDocumentId: string) {
+    startTransition(async () => {
+      console.log("Trying to enroll:", courseDocumentId);
+
+      const result = await enrollCourse(courseDocumentId);
+
+      if (result.success) {
+        setEnrolledCourseIds((prev) => [
+          ...prev,
+          courseDocumentId,
+        ]);
+      }
+    });
+  }
+
   return (
     <main className="min-h-screen bg-slate-950 p-6 text-white">
       <div className="mx-auto max-w-6xl">
@@ -64,56 +87,70 @@ export default function CoursesPage({
         </div>
 
         <div className="mt-8 space-y-4">
-          {courses.map((course) => (
-            <div
-              key={course.documentId}
-              className="flex items-center justify-between rounded-xl border border-slate-700 bg-slate-900 p-5"
-            >
-              <div>
-                <h2 className="text-lg font-semibold">
-                  {course.title}
-                </h2>
+          {courses.map((course) => {
+            const isEnrolled = enrolledCourseIds.includes(course.documentId);
 
-                <p className="mt-1 text-sm text-slate-400">
-                  {course.description}
-                </p>
-              </div>
+            return (
+              <div
+                key={course.documentId}
+                className="flex items-center justify-between rounded-xl border border-slate-700 bg-slate-900 p-5"
+              >
+                <div>
+                  <h2 className="text-lg font-semibold">
+                    {course.title}
+                  </h2>
 
-              {role === "admin" || role === "content_manager" ? (
-                <Link
-                  href={`/courses/${course.documentId}`}
-                  className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
-                >
-                  Manage
-                </Link>
-              ) : role === "instructor" ? (
-                course.instructor.documentId === user?.documentId ? (
+                  <p className="mt-1 text-sm text-slate-400">
+                    {course.description}
+                  </p>
+                </div>
+
+                {role === "admin" || role === "content_manager" ? (
                   <Link
                     href={`/courses/${course.documentId}`}
-                    className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
+                    className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white"
                   >
                     Manage
                   </Link>
-                ) : (null
-                  // <Link
-                  //   href={`/courses/${course.documentId}`}
-                  //   className="rounded-lg border border-sky-600/30 px-4 py-2 font-medium text-sky-300 transition hover:border-sky-600/50 hover:bg-sky-700/20"
-                  // >
-                  //   View Course
-                  // </Link>
-                )
-              ) : (
-                <Link
-                  href="/auth/register"
-                  className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
-                >
-                  Enroll Now
-                </Link>
-              )}
-            </div>
-          ))}
-        </div>
 
+                ) : role === "instructor" ? (
+                  course.instructor.documentId === user?.documentId ? (
+                    <Link
+                      href={`/courses/${course.documentId}`}
+                      className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white"
+                    >
+                      Manage
+                    </Link>
+                  ) : null
+
+                ) : !isLoggedIn ? (
+                  <Link
+                    href="/auth/login"
+                    className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white"
+                  >
+                    Enroll Now
+                  </Link>
+
+                ) : isEnrolled ? (
+                  <button
+                    disabled
+                    className="rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white"
+                  >
+                    Enrolled
+                  </button>
+
+                ) : (
+                  <button
+                    onClick={() => handleEnroll(course.documentId)}
+                    className="rounded-lg bg-sky-700/80 px-4 py-2 font-medium text-white transition hover:bg-sky-600/80"
+                  >
+                    Enroll Now
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </main>
   );
