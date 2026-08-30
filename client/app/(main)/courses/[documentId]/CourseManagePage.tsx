@@ -626,7 +626,6 @@ export default function CourseManagePage({ course }: { course: Course }) {
                       </form>
                     ) : (
                       <>
-                        {/* Quiz header - YOUR EXISTING DESIGN */}
                         <div className="flex items-center justify-between gap-4">
                           <p className="font-medium text-white">
                             {index + 1}. {quiz.title}
@@ -770,7 +769,6 @@ export default function CourseManagePage({ course }: { course: Course }) {
                           </form>
                         )}
 
-                        {/* QUESTIONS */}
                         <div className="mt-4 space-y-3">
                           {quiz.quiz_questions &&
                             quiz.quiz_questions.length > 0 ? (
@@ -890,7 +888,6 @@ export default function CourseManagePage({ course }: { course: Course }) {
                                     </form>
                                   ) : (
                                     <>
-                                      {/* Question header */}
                                       <div className="flex items-start justify-between gap-4">
                                         <p className="font-medium text-white">
                                           {questionIndex + 1}. {question.question}
@@ -929,7 +926,6 @@ export default function CourseManagePage({ course }: { course: Course }) {
                                         </div>
                                       </div>
 
-                                      {/* Options */}
                                       <div className="mt-3 space-y-2">
                                         {Array.isArray(question.options) &&
                                           question.options.map(

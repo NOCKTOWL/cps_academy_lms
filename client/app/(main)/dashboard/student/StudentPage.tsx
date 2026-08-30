@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { User } from "@/types/user";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { logout } from "./actions";
+import { logout } from "@/lib/auth";
 
 type StudentDashboard = {
   totalCourses?: number;

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+
 import "./globals.css";
-import 'lenis/dist/lenis.css'
-import {ReactLenis} from 'lenis/react';
+import "lenis/dist/lenis.css";
+
+import { ReactLenis } from "lenis/react";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -12,18 +14,26 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "CPS Academy LMS",
-  description: "A Learning Management System built with Next.js, TypeScript, and Tailwind CSS.",
+  description:
+    "A Learning Management System built with Next.js, TypeScript, and Tailwind CSS.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
       className={`${poppins.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <ReactLenis root />
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ReactLenis root>
+          {children}
+        </ReactLenis>
+      </body>
     </html>
   );
 }

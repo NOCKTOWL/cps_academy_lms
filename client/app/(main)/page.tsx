@@ -3,34 +3,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 font-black text-white">
-              C
-            </div>
-            <span className="text-lg font-bold tracking-tight">CPS Academy</span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href="/auth/login"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-200 transition hover:text-white"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/auth/register"
-              className="rounded-lg bg-sky-700/80 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-600/80"
-            >
-              Get started
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
+      
       <section className="relative overflow-hidden border-b border-slate-800 px-6 py-20 lg:px-8 lg:py-32">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-600 blur-3xl" />
@@ -139,7 +112,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="border-b border-slate-800 px-6 py-16 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-[1600px]">
           <div className="mb-16 text-center">
@@ -190,7 +162,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="px-6 py-16 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-[1600px]">
           <div className="rounded-2xl border border-slate-800 bg-linear-to-br from-slate-900 to-slate-950 p-8 text-center sm:p-12 lg:p-16">
@@ -225,7 +196,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-slate-800 bg-slate-950/50 px-6 py-8 lg:px-8">
         <div className="mx-auto max-w-[1600px]">
           <div className="flex flex-col items-center justify-between gap-4 text-center text-sm text-slate-400 sm:flex-row sm:text-left">

@@ -29,7 +29,6 @@ export default function ContentManagerPage({
           </p>
         </div>
 
-        {/* Stats */}
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
             <p className="text-sm text-slate-400">
@@ -62,7 +61,6 @@ export default function ContentManagerPage({
           </div>
         </div>
 
-        {/* Quick Actions */}
         <section className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-6">
           <h2 className="text-xl font-bold">
             Quick Actions
@@ -70,7 +68,7 @@ export default function ContentManagerPage({
 
           <div className="mt-5 flex flex-wrap gap-4">
             <Link
-              href="/dashboard/courses"
+              href="/courses"
               className="rounded-lg bg-cyan-500 px-5 py-3 font-medium text-slate-950 transition hover:bg-cyan-400"
             >
               Manage Courses

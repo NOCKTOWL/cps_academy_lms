@@ -6,7 +6,7 @@ import { FaYoutube } from "react-icons/fa6";
 
 import { completeLesson } from "./actions";
 import type { Course, QuizAttempt } from "@/types/course";
-import { Quiz } from '../../../../../types/course';
+import { Quiz } from '../../../../../../types/course';
 import QuizAttemp from '@/types/course';
 
 export default function StudentCoursePage({
@@ -56,7 +56,6 @@ export default function StudentCoursePage({
     <main className="min-h-screen bg-slate-950 p-6 text-white">
       <div className="mx-auto max-w-6xl">
 
-        {/* Course Header */}
         <section>
           <h1 className="text-3xl font-bold">
             {course.title}
@@ -67,7 +66,6 @@ export default function StudentCoursePage({
           </p>
         </section>
 
-        {/* Lessons */}
         <section className="mt-10">
           <h2 className="text-2xl font-bold">
             Lessons
@@ -87,7 +85,7 @@ export default function StudentCoursePage({
                     key={lesson.documentId}
                     className="flex items-center justify-start gap-8 rounded-xl border border-slate-700 bg-slate-900 p-5"
                   >
-                    {/* Complete Button */}
+                    
                     <button
                       type="button"
                       onClick={() =>
@@ -106,7 +104,7 @@ export default function StudentCoursePage({
                           : "Mark Complete"}
                     </button>
 
-                    {/* Lesson Content */}
+
                     <div className="flex w-full items-start justify-between gap-4">
                       <div>
                         <p className="font-semibold">
@@ -120,7 +118,6 @@ export default function StudentCoursePage({
                         )}
                       </div>
 
-                      {/* Video */}
                       {lesson.videoURL && (
                         <Link
                           href={lesson.videoURL}
@@ -143,7 +140,6 @@ export default function StudentCoursePage({
           </div>
         </section>
 
-        {/* Quizzes */}
 
         <section className="mt-10">
           <h2 className="text-2xl font-bold">

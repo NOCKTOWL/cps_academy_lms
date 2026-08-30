@@ -122,7 +122,7 @@ export default function InstructorPage({
                         <td className="px-6 py-4 text-sm font-medium text-white">
                           {isPublished ? (
                             <Link
-                              href={`/dashboard/courses/${course.documentId}`}
+                              href={`/courses/${course.documentId}`}
                               className="text-cyan-400 transition hover:text-cyan-300 hover:underline"
                             >
                               {course.title}

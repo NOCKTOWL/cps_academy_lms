@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { login } from "@/app/auth/actions";
+import { login } from "@/app/(auth)/auth/actions";
 
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
 

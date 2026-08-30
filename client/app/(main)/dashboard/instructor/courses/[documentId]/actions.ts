@@ -48,7 +48,7 @@ export async function addLesson(
     };
   }
 
-  revalidatePath(`/dashboard/courses/${courseDocumentId}`);
+  revalidatePath(`/courses/${courseDocumentId}`);
 
   return {
     success: true,
@@ -99,7 +99,7 @@ export async function editLesson(
     };
   }
 
-  revalidatePath(`/dashboard/courses/${courseDocumentId}`);
+  revalidatePath(`/courses/${courseDocumentId}`);
 
   return {
     success: true,
@@ -141,7 +141,7 @@ export async function deleteLesson(
     };
   }
 
-  revalidatePath(`/dashboard/courses/${courseDocumentId}`);
+  revalidatePath(`/courses/${courseDocumentId}`);
 
   return {
     success: true,
@@ -258,7 +258,7 @@ export async function addQuiz(
   );
 
   revalidatePath(
-    `/dashboard/courses/${courseDocumentId}`
+    `/courses/${courseDocumentId}`
   );
 
   return {
@@ -308,7 +308,7 @@ export async function editQuiz(
     };
   }
 
-  revalidatePath(`/dashboard/courses/${courseDocumentId}`);
+  revalidatePath(`/courses/${courseDocumentId}`);
 
   return {
     success: true,
@@ -397,7 +397,7 @@ export async function addQuizQuestion(
   }
 
   revalidatePath(
-    `/dashboard/courses/${courseDocumentId}`,
+    `/courses/${courseDocumentId}`,
   );
 
   return {
@@ -470,7 +470,7 @@ export async function editQuizQuestion(
   }
 
   revalidatePath(
-    `/dashboard/courses/${courseDocumentId}`
+    `/courses/${courseDocumentId}`
   );
 
   return {
@@ -518,7 +518,7 @@ export async function deleteQuizQuestion(
   }
 
   revalidatePath(
-    `/dashboard/courses/${courseDocumentId}`
+    `/courses/${courseDocumentId}`
   );
 
   return {
@@ -561,7 +561,7 @@ export async function deleteQuiz(
     };
   }
 
-  revalidatePath(`/dashboard/courses/${courseDocumentId}`);
+  revalidatePath(`/courses/${courseDocumentId}`);
 
   return {
     success: true,

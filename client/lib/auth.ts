@@ -1,3 +1,5 @@
+"use server";
+
 import {cookies} from "next/headers"
 import {redirect} from "next/navigation"
 
@@ -30,4 +32,11 @@ export async function requireAuth(allowedRoles: string[]) {
     }
 
     return {user, jwt};
+}
+
+export async function logout() {
+    const cookieStore = await cookies();
+    cookieStore.set("jwt", "", { path: "/", maxAge: 0 });
+
+    redirect("/auth/login");
 }
