@@ -51,7 +51,7 @@ export default function StudentPage({
 
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              href="/dashboard/student/browse-courses"
+              href="/courses"
               className="rounded-xl bg-cyan-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
             >
               Browse courses

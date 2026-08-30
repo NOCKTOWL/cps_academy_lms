@@ -1,4 +1,3 @@
-// client/components/Navbar.tsx
 "use client";
 
 import { useState } from "react";
@@ -58,7 +57,7 @@ export default function Navbar({ user }: NavbarProps) {
 
                 <div className="hidden items-center gap-8 md:flex">
                     <Link
-                        href="/blogs"
+                        href={user && (roleType === "content_manager" || roleType === "admin") ? "/dashboard/blogs" : "/blogs"}
                         className="border border-slate-600 px-4 py-2 rounded-full text-sm font-medium text-slate-300 transition hover:text-white"
                     >
                         Blog

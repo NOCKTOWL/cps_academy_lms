@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createBlog } from "../actions";
+import Image from "next/image";
 
 export default function CreateBlogPage() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function CreateBlogPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <div className="mx-auto max-w-[1400px] p-6 lg:p-8">
+      <div className="mx-auto max-w-350 p-6 lg:p-8">
         <header className="mb-8 border-b border-slate-800 pb-6">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">
             New post
@@ -111,7 +112,7 @@ export default function CreateBlogPage() {
 
                 {coverImageUrl ? (
                   <div className="mt-4 overflow-hidden rounded-xl border border-slate-700">
-                    <img
+                    <Image
                       src={coverImageUrl}
                       alt="Preview"
                       className="h-52 w-full object-cover"
