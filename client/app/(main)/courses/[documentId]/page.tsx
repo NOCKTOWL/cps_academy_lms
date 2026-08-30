@@ -21,7 +21,7 @@ export default async function Page({
   );
 
   if (!res.ok) {
-    return new Response("Failed to fetch course data", { status: res.status });
+    throw new Error(`Failed to fetch course data`);
   }
 
   const result = await res.json();

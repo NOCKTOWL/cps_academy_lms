@@ -22,7 +22,7 @@ export default async function BlogsPage() {
   );
 
   if (!res.ok) {
-    return new Response("Failed to fetch blog posts", { status: res.status });
+    throw new Error(`Failed to fetch blog posts`);
   }
 
   const result = await res.json();
