@@ -5,7 +5,7 @@ import { requireAuth } from "@/lib/auth";
 export async function enrollCourse(courseDocumentId: string) {
   const { jwt } = await requireAuth(["student"]);
 
-  console.log("Enrolling in course:", courseDocumentId);
+  // console.log("Enrolling in course:", courseDocumentId);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/enrollments`,

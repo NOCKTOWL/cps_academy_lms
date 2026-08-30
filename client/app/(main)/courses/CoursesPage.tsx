@@ -38,7 +38,7 @@ export default function CoursesPage({
 
   function handleEnroll(courseDocumentId: string) {
     startTransition(async () => {
-      console.log("Trying to enroll:", courseDocumentId);
+      // console.log("Trying to enroll:", courseDocumentId);
 
       const result = await enrollCourse(courseDocumentId);
 

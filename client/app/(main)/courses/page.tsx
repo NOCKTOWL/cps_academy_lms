@@ -1,13 +1,8 @@
-import { requireAuth } from "@/lib/auth";
+
 import CoursesPage from "./CoursesPage";
 import { cookies } from "next/headers";
 
 export default async function Page() {
-  // const { user, jwt } = await requireAuth([
-  //     "admin",
-  //     "content_manager",
-  //     "instructor",
-  // ]);
 
   const cookieStore = await cookies();
   const jwt = cookieStore.get("jwt")?.value;
